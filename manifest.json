@@ -1,0 +1,6 @@
+{
+  "name": "rayark-visualiser",
+  "short_name": "rayark-visualiser",
+  "start_url": "/",
+  "display": "standalone"
+}

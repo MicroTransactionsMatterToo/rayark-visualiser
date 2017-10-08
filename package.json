@@ -1,0 +1,22 @@
+{
+  "name": "rayark-visualiser",
+  "version": "1.0.0",
+  "description": "Visualises Rayark music files",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MicroTransactionsMatterToo/rayark-visualiser.git"
+  },
+  "author": "Ennis Massey <ennisbaradine@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MicroTransactionsMatterToo/rayark-visualiser/issues"
+  },
+  "homepage": "https://github.com/MicroTransactionsMatterToo/rayark-visualiser#readme"
+}
