@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
@@ -10,11 +10,17 @@
     <!-- See https://goo.gl/OOhYW5 -->
     <link rel="manifest" href="/manifest.json">
 
-    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="/static/js/webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="bower_components/polymer/polymer.html">
+    <link rel="import" href="bower_components/polymer/lib/utils/async.html">
+    <link rel="import" href="static/js/polymer/polymer.html">
+    <link rel="import" href="static/js/polymer/lib/utils/polymer.html">
 
-    <link rel="import" href="/src/vis-app/vis-app.html">
-  </head>
-  <body>
-    <vis-app></vis-app>
-  </body>
+
+    <link rel="import" href="/static/components/vis-app/vis-app.html">
+    <link rel="import" href="/static/components/vis-canvas/vis-canvas.html">
+</head>
+<body>
+<vis-app></vis-app>
+</body>
 </html>

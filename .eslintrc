@@ -1,0 +1,47 @@
+{
+  "parserOptions": {
+    "ecmaVersion":6,
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "eqeqeq": "error",
+    "curly": "error",
+    "consistent-return": "warn",
+    "default-case": "error",
+    "block-scoped-var": "error",
+    "complexity": ["warn", 4],
+    "guard-for-in": "warn",
+    "no-case-declarations": "warn",
+    "no-else-return": "warn",
+    "no-empty-function": "warn",
+    "no-eq-null": "error",
+    "no-eval": "error",
+    "no-extend-native": "error",
+    "no-extra-label": "error",
+    "no-floating-decimal": "error",
+    "no-magic-numbers": "warn",
+    "no-implied-eval": "error",
+    "no-new": "warn",
+    "no-new-func": "error",
+    "yoda": "warn",
+    "wrap-iife": "warn",
+    "vars-on-top": "warn",
+    "require-await": "error",
+    "no-useless-concat": "warn",
+    "no-useless-escape": "error",
+    "no-useless-return": "warn",
+    "no-unused-labels": "error",
+    "no-useless-call": "warn",
+    "no-return-await": "warn",
+    "no-return-assign": "warn",
+    "no-redeclare": "warn",
+    "no-proto": "error",
+    "no-param-reassign": "error",
+    "no-multi-spaces": "warn"
+  }
+}

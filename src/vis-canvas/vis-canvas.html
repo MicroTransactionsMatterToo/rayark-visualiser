@@ -1,0 +1,238 @@
+<dom-module id="vis-canvas">
+    <template>
+        <canvas id="primary-canvas">
+
+        </canvas>
+    </template>
+
+    <script>
+        /**
+         * @extends Polymer.Element
+         * @property {LoadingProgress} load_screen  - Loading screen rendering handler
+         * @property {AssetFiles} asset_info    - Asset file information
+         * @polymer
+         **/
+        class VisCanvas extends Polymer.Element {
+            /**
+             * @static
+             * @returns {string} Selector
+             **/
+            static get is() {
+                return "vis-canvas";
+            }
+
+            /**
+             * Updates the canvas size to the current windows width and height
+             * @param {CustomEvent} event
+             * @private
+             */
+            _updateCanvasSize(event) {
+                this.$["primary-canvas"].height = innerHeight;
+                this.$["primary-canvas"].width = innerWidth;
+            }
+
+            /**
+             * Starts the rendering of the loading bar
+             * @param {CustomEvent} event
+             * @private
+             */
+            _startLoadingScreen(event) {
+                this.load_screen = new LoadingProgress(this.$["primary-canvas"].getContext("2d"), this.asset_info);
+                this.load_screen.render();
+            }
+
+            /**
+             * Wrapper to {@link LoadingProgress} to update the progress
+             * @param event
+             * @private
+             */
+            _fileLoaded(event) {
+                this.load_screen.fileLoaded(event);
+            }
+
+            /**
+             * Constructor
+             * @static
+             */
+            constructor() {
+                super();
+            }
+
+            /**
+             * Polymer ready event
+             */
+            ready() {
+                super.ready();
+                this.asset_info = new AssetFiles(this);
+                window.addEventListener("resize", (e) => {
+                    this._updateCanvasSize(e)
+                });
+                this.addEventListener("assetsloaded", (e) => {
+                    this._startLoadingScreen(e);
+                });
+                this.addEventListener("assetloaded", (e) => {
+                    this._fileLoaded(e);
+                });
+                this._updateCanvasSize();
+            }
+        }
+
+
+        /**
+         * @class LoadingProgress
+         * @property {CanvasRenderingContext2D} ctx     - Rendering Context
+         * @property {AssetFiles} assets        - Asset Files
+         * @property {Object[]} loaded_files    - Loaded asset files
+         * @property {{bar_width: number, bar_height: number, margin: {sides: number, top: number}, radius: number}} styling    - Styling of loading bar
+         */
+        class LoadingProgress {
+            /**
+             * Constructor
+             * @param {CanvasRenderingContext2D} ctx
+             * @param {AssetFiles} assets
+             */
+            constructor(ctx, assets) {
+                this.ctx = ctx;
+                this.assets = assets;
+                // Dimensioning
+                this.styling = {
+                    bar_width: (this.ctx.canvas.width / 5) * 3,
+                    bar_height: this.ctx.canvas.width / 30,
+                    margin: {
+                        sides: this.ctx.canvas.width / 5,
+                        top: (this.ctx.canvas.height / 30) * 13
+                    },
+                    radius: 90
+                };
+                this.initialiseRect();
+            }
+
+            /**
+             * @public
+             **/
+            initialiseRect() {
+                this.ctx.clearRect(0,0, 9000, 9000);
+                this.ctx.fillStyle = "gray";
+                this.ctx.fillRect(
+                    this.styling.margin.sides,
+                    this.styling.margin.top,
+                    this.styling.bar_width,
+                    this.styling.bar_height
+                );
+            }
+
+            /**
+             * Asynchronous render loop
+             * @returns {Promise} Asset download
+             * @async
+             */
+            async render() {
+                return new Promise((resolve, reject) => {
+                    let file_total = this.assets.file_count;
+                    this.loaded_files = [];
+                    let promises = [];
+                    for (let i of this.assets.asset_list) {
+                        promises.push(this.assets.fetch_files(i));
+                    }
+                    return Promise.all(promises);
+                })
+            }
+
+            /**
+             * Updates the visible progress bar
+             * @param {AssetLoaded} event
+             **/
+            fileLoaded(event) {
+                this.loaded_files.push(event.details);
+                // Draw secondary rectangle
+                this.ctx.fillStyle = "black";
+                this.ctx.fillRect(
+                    this.styling.margin.sides,
+                    this.styling.margin.top,
+                    (this.styling.bar_width  /this.assets.file_count ) * this.loaded_files.length,
+                    this.styling.bar_height
+                );
+                this.ctx.stroke();
+            }
+        }
+
+        /**
+         * @class Renderer
+         */
+        class Renderer {
+            constructor() {
+            }
+        }
+
+        /**
+         * @class AssetInfoLoaded
+         */
+        class AssetInfoLoaded extends CustomEvent {
+            constructor(details) {
+                super("assetsloaded", details);
+            }
+        }
+
+        /**
+         * @class AssetLoaded
+         */
+        class AssetLoaded extends CustomEvent {
+            constructor(details) {
+                super("assetloaded", details);
+            }
+        }
+
+        /**
+         * @class AssetFiles
+         * @property {VisCanvas} callee     - Calling class
+         * @property {string[]} asset_list  - List of asset file names
+         * @property {number} file_count    - Number of files
+         */
+        class AssetFiles {
+            /**
+             * @param {VisCanvas} callee    - Calling class
+             **/
+            constructor(callee) {
+                this.callee = callee;
+                fetch("/api/assets/fileList")
+                    .then((response) => {
+                        return response.json();
+                    })
+                    .then((json_content) => {
+                        this.asset_list = json_content["fileNames"];
+                        this.file_count = json_content["fileLength"];
+                        return json_content;
+                    })
+                    .then((json_content) => {
+                        this.callee.dispatchEvent(new AssetInfoLoaded(json_content));
+                    });
+            }
+
+            /**
+             * Fetches the given asset file, returning a promise
+             * @param {string} file
+             * @public
+             * @returns {Promise}
+             */
+            fetch_files(file) {
+                return new Promise((resolve, reject) => {
+                    fetch(`/static/assets/${file}`)
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((json_data) => {
+                            this.callee.dispatchEvent(new AssetLoaded(json_data));
+                            resolve(json_data);
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                })
+            }
+        }
+
+
+        customElements.define(VisCanvas.is, VisCanvas);
+    </script>
+</dom-module>
+

@@ -1,32 +1,21 @@
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
-
 <dom-module id="vis-app">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <h2>Hello [[prop1]]!</h2>
-  </template>
+    <template>
+        <vis-canvas></vis-canvas>
+    </template>
 
-  <script>
-    /**
-     * @customElement
-     * @polymer
-     */
-    class VisApp extends Polymer.Element {
-      static get is() { return 'vis-app'; }
-      static get properties() {
-        return {
-          prop1: {
-            type: String,
-            value: 'vis-app'
-          }
-        };
-      }
-    }
+    <script>
+        class VisApp extends Polymer.Element {
+            static get is() {
+                return "vis-app";
+            };
 
-    window.customElements.define(VisApp.is, VisApp);
-  </script>
+            ready() {
+                super.ready();
+            }
+
+        }
+
+
+        customElements.define(VisApp.is, VisApp);
+    </script>
 </dom-module>
