@@ -1,6 +1,51 @@
 <dom-module id="vis-app">
+
     <template>
+        <style>
+            paper-dropdown-menu {
+
+                width: 100%;
+                --paper-input-container: {
+                    background-color: white;
+                    padding: 0px;
+                }
+
+                --paper-input-container-input: {
+                    margin-left: 10px;
+                    bottom: 7px;
+
+                };
+            }
+
+            app-header {
+                @apply(--shadow-elevation-2dp);
+                background: var(--paper-cyan-500);
+                color: var(--text-primary-color);
+                position: fixed;
+                height: 64px;
+                width: 100vw;
+                top: 0;
+                left: 0;
+            }
+
+            paper-dropdown-menu {
+
+            }
+
+            :host {
+            }
+        </style>
+        <app-header condenses fixed class="paper-header">
+            <app-toolbar>
+                <paper-dropdown-menu inline>
+                    <paper-listbox id="dropdown-box" slot="dropdown-content" class="dropdown-content">
+                        <paper-item>None</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+            </app-toolbar>
+        </app-header>
         <vis-canvas></vis-canvas>
+
     </template>
 
     <script>
@@ -11,6 +56,29 @@
 
             ready() {
                 super.ready();
+                this.addEventListener("assetsloaded", (e) => {
+                    this._updateDropdown(e);
+                });
+                this.$["dropdown-box"].addEventListener("selected-item-changed", (e) => {
+                    console.log(e);
+                })
+            }
+
+            _updateDropdown(event) {
+
+                console.log(event);
+                for (let entry of event.detail.fileNames) {
+                    if (entry !== "bubbles" && entry !== "composed") {
+                        this._addItem(`${entry}\n`);
+                    }
+                }
+            }
+
+            _addItem(content) {
+                let dropdown = this.$["dropdown-box"];
+                let nitem = document.createElement("paper-item");
+                nitem.innerText = content;
+                Polymer.dom(dropdown).appendChild(nitem);
             }
 
         }
@@ -18,4 +86,5 @@
 
         customElements.define(VisApp.is, VisApp);
     </script>
+    <link rel="stylesheet" href="vis-app.css">
 </dom-module>

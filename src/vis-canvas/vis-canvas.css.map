@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA;;;;;;;;;;;IAWI;AACJ,UAAW;EACT,UAAU,EAAE,IAAI;EAChB,QAAQ,EAAE,IAAI;EACd,MAAM,EAAE,IAAI",
+"sources": ["vis-canvas.scss"],
+"names": [],
+"file": "vis-canvas.css"
+}

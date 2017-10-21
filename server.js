@@ -7,9 +7,10 @@ const SERVE_PORT = 3000;
 let app = express();
 app.use(morgan("common"));
 
-app.use("/static/js", express.static(path.join(__dirname, "bower_components")));
+// app.use("/static/js", express.static(path.join(__dirname, "bower_components")));
 app.use("/static/assets", express.static(path.join(__dirname, "assets")));
 app.use("/static/components", express.static(path.join(__dirname, "src")));
+app.use("/bower_components", express.static(path.join(__dirname, "bower_components")));
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
